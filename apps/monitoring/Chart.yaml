@@ -1,0 +1,7 @@
+apiVersion: v2
+name: monitoring
+version: v0.1.0
+dependencies:
+  - name: prometheus-operator
+    version: "9.3.1"
+    repository: https://kubernetes-charts.storage.googleapis.com/

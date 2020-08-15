@@ -5,7 +5,6 @@ tenants:
 
     apps:
       monitoring:
-        repoURL: https://github.com/helm/charts.git/
-        path: stable/prometheus-operator
+        path: apps/monitoring
         targetRevision: HEAD
         wave: -5
