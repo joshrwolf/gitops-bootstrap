@@ -1,4 +1,4 @@
 prometheus-operator:
   prometheusOperator:
-    admissionWebhooks:
+    patch:
       enabled: false
