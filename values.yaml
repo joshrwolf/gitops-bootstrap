@@ -1,0 +1,11 @@
+tenants:
+  admin:
+    create: false
+    project: admin
+
+    apps:
+      monitoring:
+        repoURL: https://github.com/helm/charts.git/
+        path: stable/prometheus-operator
+        targetRevision: HEAD
+        wave: -5

@@ -1,0 +1,62 @@
+{{- /*
+For m tenants, create n Applications whos values are layered from app --> tenant --> global
+
+By default, the Application will:
+  - be named: <release name>-<tenant>-<app>
+  - be in project: <tenant>
+  - deploy to: <local cluster>
+  - in the namespace: <tenant>-<app>
+
+All the defaults above can be overriden
+*/ -}}
+{{- range $tenant, $tVals := .Values.tenants }}
+{{- if or ($tVals.enabled) (eq ($tVals.enabled | toString) "<nil>") }}
+{{- range $app, $aVals := $tVals.apps }}
+{{- if or ($aVals.enabled) (eq ($aVals.enabled | toString) "<nil>") }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $.Release.Name }}-{{ $tenant }}-{{ $app }}
+  namespace: argocd
+  labels:
+{{ include "argocd-bootstrap.labels" $ | indent 4 }}
+    owner: {{ $tenant }}
+  annotations:
+{{- if ne ($aVals.wave | toString) "" }}
+    argocd.argoproj.io/sync-wave: {{ $aVals.wave | quote }}
+{{- end }}
+{{- if not $aVals.finalizer }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+{{ end -}}
+spec:
+  project: {{ $aVals.project | default $tVals.project | default $.Values.project | default (printf "%s-%s" $.Release.Name $tenant) }}
+  destination:
+    server: {{ $aVals.cluster | default $tVals.cluster | default $.Values.cluster | required (printf "No destination cluster found for %s" $app) }}
+    namespace: {{ $aVals.namespace | default $app }}
+  source:
+    repoURL: {{ $aVals.repoURL | default $tVals.repoURL | default $.Values.repoURL | required (printf "No repoURL specified for %s" $app) }}
+    targetRevision: {{ $aVals.targetRevision | default $tVals.targetRevision | default $.Values.targetRevision }} 
+    path: {{ tpl $aVals.path $ | required (printf "No path found for %s" $app ) }}
+
+{{- /* Extra source fields simply rendered */ -}}
+{{- if $aVals.extraSourceConfig }}
+{{ tpl $aVals.extraSourceConfig $ | indent 4 }}
+{{- end -}}
+
+{{- if not $aVals.autoSync }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+{{ end -}}
+
+{{- if $aVals.extraFields }}
+{{ tpl $aVals.extraFields $ | indent 2 }}
+{{- end -}}
+
+{{ end -}}
+{{ end -}}
+{{ end -}}
+{{ end -}}

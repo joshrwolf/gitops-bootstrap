@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: umbrella
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: admin
+  source:
+    repoURL: https://github.com/joshrwolf/gitops-bootstrap.git
+    targetRevision: HEAD
+    path: bootstrap/
+
+    helm:
+      releaseName: umbrella
+      parameters:
+        - name: repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: env
+          value: prod
+      valueFiles:
+        - ../values.yaml
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  # Sync policy
+  # syncPolicy:
+  #   automated:
+  #     prune: true
+  #     selfHeal: true

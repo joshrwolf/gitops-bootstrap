@@ -1,0 +1,82 @@
+{{- /*
+For m tenants, create m AppProjects whos values are layered from tenant --> global
+
+By default, the AppProject will:
+  - be named: <release name>-<tenant>
+  - create a single `developer` role with a single read policy
+
+*/ -}}
+{{- range $tenant, $vals := .Values.tenants }}
+{{- if or ($vals.enabled) (eq ($vals.enabled | toString) "<nil>") }}
+{{- if or ($vals.create) (eq ($vals.create | toString) "<nil>") }}
+
+{{- $_ := set $ "project" $tenant }}
+
+{{- $roles := default $.Values.roles $vals.roles }}
+{{- $sourceRepos := default $.Values.sourceRepos $vals.sourceRepos }}
+{{- $destinations := default $.Values.destinations $vals.destinations }}
+{{- $namespaceResourceWhitelist := default $.Values.namespaceResourceWhitelist $vals.namespaceResourceWhitelist }}
+{{- $namespaceResourceBlacklist := default $.Values.namespaceResourceBlacklist $vals.namespaceResourceBlacklist }}
+{{- $clusterResourceWhitelist := default $.Values.clusterResourceWhitelist $vals.clusterResourceWhitelist }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $.Release.Name }}-{{ $tenant }}
+  labels:
+{{ include "argocd-bootstrap.labels" $ | indent 4 }}
+    owner: {{ $tenant }}
+spec:
+  description: {{ $vals.description | default (printf "Project for %s" $tenant) }}
+
+{{- if $sourceRepos }}
+  sourceRepos:
+{{ tpl $sourceRepos $ | indent 2 }}
+{{- if $vals.extraSourceRepos }}
+{{ tpl $vals.extraSourceRepos $ | indent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{- if $destinations }}
+  destinations:
+{{ tpl $destinations $ | indent 2 }}
+{{- if $vals.extraDestinations }}
+{{ tpl $vals.extraDestinations $ | indent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{- if $clusterResourceWhitelist }}
+  clusterResourceWhitelist:
+{{ tpl $clusterResourceWhitelist $ | indent 2 }}
+{{- if $vals.extraClusterResourceWhitelist }}
+{{ tpl $vals.extraClusterResourceWhitelist $ | indent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{- if $namespaceResourceWhitelist }}
+  namespaceResourceWhitelist:
+{{ tpl $namespaceResourceWhitelist $ | indent 2 }}
+{{- if $vals.extraNamespaceResourceWhitelist }}
+{{ tpl $vals.extraNamespaceResourceWhitelist $ | indent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{- if $namespaceResourceBlacklist }}
+  namespaceResourceBlacklist:
+{{ tpl $namespaceResourceBlacklist $ | indent 2 }}
+{{- if $vals.extraNamespaceResourceBlacklist }}
+{{ tpl $vals.extraNamespaceResourceBlacklist $ | indent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{- if $roles }}
+  roles:
+{{ tpl $roles $ | indent 2 }}
+{{- if $vals.extraRoles }}
+{{ tpl $vals.extraRoles $ | indent 2 }}
+{{ end -}}
+{{ end -}}
+
+{{ end -}}
+{{ end -}}
+{{ end -}}

@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+    name: bootstrap
+upstream:
+    type: git
+    git:
+        commit: 8c34b9cc63d48e76760a85f2590c0e39c1d142c5
+        repo: https://repo1.dsop.io/platform-one/apps/argocd-bootstrap
+        directory: /
+        ref: master

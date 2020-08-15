@@ -1,0 +1,37 @@
+env: dev
+
+tenants:
+  linter:
+    # roles: |
+    #   - name: read
+    #     description: Read only
+    extraRoles: |
+      - name: ci
+        description: CI/CD privileges
+    extraNamespaceResourceWhitelist: |
+      - kind: "Namespace"
+        group: "api"
+    apps:
+      mattsmom:
+        repoURL: https://repo1.dsop.io/mattsmom.git
+        path: overlays/{{ .Values.env }}/
+        wave: -4
+        extraFields: |
+          ignoreDifferences:
+            - name: something
+      mattsothermom:
+        repoURL: https://repo2.dsop.io/mattsothermom.git
+        path: some/path/override/
+        wave: 5
+        cluster: some-override
+        targetRevision: v0.1.0
+        extraSourceConfig: |
+          helm:
+            values: |
+              derp: 1
+  proj-skip:
+    create: false
+    apps:
+      babyyoda:
+        repoURL: doesntmatter
+        path: doesntmatter

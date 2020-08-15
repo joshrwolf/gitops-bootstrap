@@ -1,0 +1,132 @@
+# Default values that all applications and projects fall back to
+
+# cluster -- Cluster to deploy application to (`spec.destination.server`)
+cluster: https://kubernetes.default.svc
+
+# targetRevision -- Git target revision or helm chart version (`spec.source.targetRevision`)
+targetRevision: HEAD
+
+# env -- Special variable for templates inside templates to provide runtime variable substitution of values within values
+# This is especially helpful for dynamic paths as such: `path: bases/{{ .Values.env }}/folder` renders as `path: bases/dev/folder/`
+env:
+
+# repoURL -- URL of rpeository (`spec.source.repoURL`)
+# repoURL: 
+
+# roles -- Roles defined for all projects
+roles: |
+  - name: read
+    description: Read only privileges
+    policies:
+    - p, proj:{{ $.Release.Name }}-{{ $.project }}:read, applications, get, {{ $.Release.Name }}-{{ $.project }}/*, allow
+    groups:
+    - /Product-Teams/{{ $.project | title }}
+
+# destinations -- List of namespaces and clusters (identified with namespace and server) allowed within project
+destinations: |
+  - namespace: "*"
+    server: "*"
+
+# sourceRepos -- List of allowed repositories to source manifests from (defaults to anything)
+sourceRepos: |
+  - "*"
+
+# namespaceResourceWhitelist -- List of namespace scoped resources (identified with group and kind) allowed within project
+namespaceResourceWhitelist: |
+  - group: "*"
+    kind: "*"
+
+# clusterResourceWhitelist -- List of cluster scoped resources (identified with group and kind) allowed within project
+clusterResourceWhitelist: |
+  - group: "*"
+    kind: "*"
+
+# clusterResourceBlacklist -- List of cluster scoped resources (identified with group and kind) not allowed within project
+clusterResourceBlacklist: |
+  - group: ""
+    kind: ""
+
+# List of tenants (projects) to create applications in
+# tenants:
+  # Name of tenant
+  # platformone:
+    # Project description
+    # description: 
+
+    # Override default sourceRepos
+    # sourceRepos: |
+
+    # Additional sourceRepos appended to this project
+    # extraSourceRepos: |
+
+    # Override default roles
+    # roles: |
+
+    # Additional roles appended to this project
+    # extraRoles: |
+
+    # Override default destinations
+    # destinations: |
+
+    # Additional destinations appended to this project
+    # extraDestinations: |
+
+    # Override default namespaceResourceWhitelist
+    # namespaceResourceWhitelist: |
+
+    # Additional namespaceResourceWhitelist appended to this project
+    # extraNamespaceResourceWhitelist: |
+
+    # Override default clusterResourceWhitelist
+    # clusterResourceWhitelist: |
+
+    # Additional clusterResourceWhitelist appended to this project
+    # extraClusterResourceWhitelist: |
+
+    # Override default clusterResourceBlacklist
+    # clusterResourceBlacklist: |
+
+    # Additional clusterResourceBlacklist appended to this project
+    # extraClusterResourceBlacklist: |
+
+    # Tenant specific override for cluster
+    # cluster: 
+
+    # Tenant specific override for project
+    # project
+
+    # Tenant specific override for targetRevision
+    # targetRevision: 
+
+    # List of Applications to create in tenant
+    # apps:
+      # Name of the application
+      # mattsmom:
+        # repoURL: https://repo1.dsop.io/mattsmom.git
+        # path: overlays/dev/
+
+        # Toggle application creation (defaults to true if empty)
+        # enabled: false
+
+        # Application specific override for cluster
+        # cluster:
+
+        # Application specific override for project
+        # project:
+
+        # Application specific override for targetRevision
+        # targetRevision: 
+
+        # Application specific override for namespace (defaults to tenant name)
+        # namespace: 
+
+        # `argocd.argoproj.io/sync-wave` annotation applied to the Application
+        # wave: -3
+
+        # Extra manfiest generation source configuration (treated as a fields passthrough)
+        # extraSourceConfig: |
+        #   helm:
+        #     ... 
+
+        # Extra fields appended to the Applications `.spec.`
+        # extraFields: |
