@@ -8,6 +8,9 @@ tenants:
         path: apps/monitoring/manifests/
         wave: -4
         namespace: monitoring
+        extraSourceConfig: |
+          directory:
+            recurse: true
 
       opa-gatekeeper:
         path: apps/gatekeeper/
