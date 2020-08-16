@@ -10,9 +10,6 @@ spec:
   - name: web
     port: 9090
     targetPort: web
-  - name: grpc
-    port: 10901
-    targetPort: 10901
   selector:
     app: prometheus
     prometheus: k8s
