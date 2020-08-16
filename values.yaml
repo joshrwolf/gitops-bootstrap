@@ -4,8 +4,13 @@ tenants:
     project: admin
 
     apps:
+      monitoring:
+        path: apps/monitoring/manifests/
+        wave: -4
+        namespace: monitoring
+
       opa-gatekeeper:
-        path: apps/gatekeeper
+        path: apps/gatekeeper/
         wave: -4
         namespace: gatekeeper-system
         extraFields: |
