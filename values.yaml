@@ -17,11 +17,6 @@ tenants:
         wave: -4
         namespace: gatekeeper-system
         extraFields: |
-          ignoreDifferences:
-          - group: apiextensions.k8s.io
-            kind: CustomResourceDefinition
-            jsonPointers:
-            - /status
           - group: admissionregistration.k8s.io
             kind: ValidatingWebhookConfiguration
             jsonPointers:
