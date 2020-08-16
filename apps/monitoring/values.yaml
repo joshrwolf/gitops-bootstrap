@@ -1,4 +1,0 @@
-prometheus-operator:
-  prometheusOperator:
-    patch:
-      enabled: false
