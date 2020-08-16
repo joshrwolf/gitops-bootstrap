@@ -8,3 +8,9 @@ tenants:
         path: apps/monitoring
         targetRevision: HEAD
         wave: -5
+        extraFields: |
+          ignoreDifferences:
+          - group: 
+            kind: 
+            jsonPointers:
+            - /metadata/annotations/"helm.sh/hook"
